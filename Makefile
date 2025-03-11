@@ -23,6 +23,10 @@ cov:
 	coverage erase
 	python -WError -m pytest --cov=ioc_cleanup --cov-report term-missing --durations=10 --pdb
 
+cov_nb:
+	coverage erase
+	python -m pytest --nbval notebooks --cov=ioc_cleanup --cov-report term-missing --durations=10 --pdb
+
 deps:
 	pre-commit run poetry-lock -a
 	pre-commit run poetry-check -a

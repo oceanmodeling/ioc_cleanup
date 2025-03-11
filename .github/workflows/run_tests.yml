@@ -1,0 +1,38 @@
+name: test
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+jobs:
+  test:
+    name: "test"
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python: ["3.11"]
+    defaults:
+      run:
+        shell: "bash -eo pipefail {0}"
+
+    steps:
+      - uses: "actions/checkout@v3"
+      - uses: "actions/setup-python@v3"
+        with:
+          python-version: "${{ matrix.python }}"
+      - uses: "actions/cache@v3"
+        id: "cache"
+        with:
+          path: "${{ env.pythonLocation }}"
+          key: "test-${{ runner.os }}-${{ env.pythonLocation }}-${{ hashFiles('pyproject.toml', 'requirements/*') }}"
+      - run: "python --version"
+      - run: "python -mpip install -U pip"
+      - run: "python -mpip --version"
+      - run: "python -mpip install -r requirements/requirements-dev.txt"
+      - run: "python -mpip install ./"
+      - name: "Run tests"
+        run: "make cov_nb"

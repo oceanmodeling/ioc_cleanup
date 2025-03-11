@@ -17,8 +17,19 @@ def plot_geographic_coverage(
 ) -> hv.DynamicMap:
     stations_bad = meta[~meta.ioc_code.isin(ioc_codes)]
     stations_good = meta[meta.ioc_code.isin(ioc_codes)]
-    plot_bad = stations_bad.hvplot.points(geo=True, tiles=True, color="red", hover=False, use_index=False, label="low")
+    plot_bad = stations_bad.hvplot.points(
+        x="lon",
+        y="lat",
+        geo=True,
+        tiles=True,
+        color="red",
+        hover=False,
+        use_index=False,
+        label="low",
+    )
     plot_good = stations_good.hvplot.points(
+        x="lon",
+        y="lat",
         geo=True,
         tiles=True,
         color="green",
@@ -29,24 +40,27 @@ def plot_geographic_coverage(
 
 
 # Create a function to print selected points
-def print_all_points(df: pd.DataFrame, indices: pd.Index[int]) -> None:
+def print_all_points(df: pd.DataFrame, indices: pd.Index[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
-        print([p.isoformat() for p in df.iloc[indices].index.to_list()])  # noqa: T201
+        timestamps = [f'    "{df.index[id_].strftime("%Y-%m-%dT%H:%M:%S")}"' for id_ in indices]
+        value = ",\n".join(timestamps)
     else:
-        print("No selection!")  # noqa: T201
+        value = "No selection!"
+    text_box.value = value
 
 
-def print_range(df: pd.DataFrame, indices: pd.Index[int]) -> None:
+def print_range(df: pd.DataFrame, indices: pd.Index[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
         first_ts = df.index[indices[0]]
         last_ts = df.index[indices[-1]]
-        print(f'("{first_ts}", "{last_ts}"),')  # noqa: T201
+        value = f'["{first_ts}", "{last_ts}"],'
     else:
-        print("No selection!")  # noqa: T201
+        value = "No selection!"
+    text_box.value = value
 
 
 def select_points(df: pd.DataFrame) -> T.Any:
-    curve = df.hvplot.line(tools=["hover", "crosshair", "undo"], grid=True)
+    curve = df.hvplot.line(tools=["hover", "crosshair", "undo"], grid=True, rasterize=True, colorbar=False)
     points = df.hvplot.scatter(tools=["box_select"]).opts(
         color="gray",
         active_tools=["box_zoom"],
@@ -54,18 +68,24 @@ def select_points(df: pd.DataFrame) -> T.Any:
         selection_color="red",
         selection_alpha=1.0,
         nonselection_alpha=0.3,
-        size=1,
+        size=2,
     )
     selection = holoviews.streams.Selection1D(source=points)
 
-    button_all = pn.widgets.Button(name="Print All Points", button_type="primary")  # type: ignore[no-untyped-call]
-    button_all.on_click(lambda _: print_all_points(df=df, indices=selection.index))
+    points_all = pn.widgets.TextAreaInput(value="", height=200, placeholder="Selected indices will appear here")  # type: ignore[no-untyped-call]
+    points_range = pn.widgets.TextAreaInput(value="", height=200, placeholder="Selected indices will appear here")  # type: ignore[no-untyped-call]
 
-    button_range = pn.widgets.Button(name="Print Range", button_type="primary")  # type: ignore[no-untyped-call]
-    button_range.on_click(lambda _: print_range(df=df, indices=selection.index))
+    selection.add_subscriber(lambda index: print_range(df=df, indices=index, text_box=points_range))
+    selection.add_subscriber(lambda index: print_all_points(df=df, indices=index, text_box=points_all))
 
     plot = curve * points
-    layout = pn.Column(plot.opts(width=1600, height=500), pn.Row(button_all, button_range))
+    layout = pn.Column(
+        plot.opts(width=1600, height=500),
+        pn.Row(
+            pn.Column("## Selected Indices:", points_all),
+            pn.Column("## Selected Ranges:", points_range),
+        ),
+    )
     out = pn.panel(layout).servable()
     return out
 

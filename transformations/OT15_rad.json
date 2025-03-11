@@ -1,0 +1,19 @@
+{
+  "ioc_code": "OT15",
+  "sensor": "rad",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+  ],
+  "dropped_timestamps": [
+    "2024-01-21T01:28:00",
+    "2024-04-01T20:50:00",
+    "2024-04-01T20:51:00"
+  ],
+  "segments": []
+}

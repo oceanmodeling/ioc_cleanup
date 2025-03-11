@@ -1,0 +1,14 @@
+{
+    "ioc_code": "casc",
+    "sensor": "rad",
+    "notes": "regular bursts of 10 days samples with 20days gaps + steps. Unusable for detide",
+    "skip": true,
+    "wip": false,
+    "start": "2022-01-01T00:00:00",
+    "end": "2025-01-01T00:00:00",
+    "high": null,
+    "low": null,
+    "dropped_date_ranges": [    ],
+    "dropped_timestamps": [],
+    "segments": []
+  }

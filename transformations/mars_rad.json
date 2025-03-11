@@ -1,0 +1,20 @@
+{
+    "ioc_code": "mars",
+    "sensor": "rad",
+    "notes": "",
+    "skip": false,
+    "wip": false,
+    "start": "2022-01-01T00:00:00",
+    "end": "2025-01-01T00:00:00",
+    "high": null,
+    "low": null,
+    "dropped_date_ranges": [
+        ["2022-11-24 12:15:00", "2022-11-24 12:18:00"]
+    ],
+    "dropped_timestamps": [
+        "2023-12-13 07:15:00",
+        "2023-12-13 08:15:00",
+        "2023-12-13 08:16:00"
+    ],
+    "segments": []
+  }

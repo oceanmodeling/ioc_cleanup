@@ -1,0 +1,14 @@
+{
+    "ioc_code": "palm",
+    "sensor": "rad",
+    "notes": "lots of noise for some storms",
+    "skip": false,
+    "wip": false,
+    "start": "2022-01-01T00:00:00",
+    "end": "2025-01-01T00:00:00",
+    "high": null,
+    "low": null,
+    "dropped_date_ranges": [],
+    "dropped_timestamps": [],
+    "segments": []
+  }

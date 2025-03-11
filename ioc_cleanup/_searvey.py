@@ -31,7 +31,7 @@ def download_raw(ioc_codes: list[str], start: pd.Timestamp, end: pd.Timestamp) -
     no_codes = len(ioc_codes)
     start_dates = pd.DatetimeIndex([start] * no_codes)
     end_dates = pd.DatetimeIndex([end] * no_codes)
-    dataframes: dict[str, pd.DataFrame] = searvey.ioc._fetch_ioc(
+    dataframes: dict[str, pd.DataFrame] = searvey._ioc_api._fetch_ioc(
         station_ids=ioc_codes,
         start_dates=start_dates,
         end_dates=end_dates,
@@ -39,5 +39,6 @@ def download_raw(ioc_codes: list[str], start: pd.Timestamp, end: pd.Timestamp) -
         rate_limit=None,
         multiprocessing_executor=None,
         multithreading_executor=None,
+        progress_bar=False,
     )
     return dataframes

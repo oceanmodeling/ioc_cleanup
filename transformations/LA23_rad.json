@@ -1,11 +1,11 @@
 {
   "ioc_code": "LA23",
   "sensor": "rad",
-  "notes": "",
+  "notes": "lots of noise during storms. keeping raw data anyway",
   "skip": false,
   "wip": false,
   "start": "2022-01-01T00:00:00",
-  "end": "2023-11-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
   "high": null,
   "low": null,
   "dropped_date_ranges": [

@@ -1,0 +1,18 @@
+{
+  "ioc_code": "fren",
+  "sensor": "ra2",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+  ],
+  "dropped_timestamps": [
+    "2023-09-05T11:05:00",
+    "2024-12-10T12:35:00"
+  ],
+  "segments": []
+}

@@ -1,0 +1,21 @@
+{
+  "ioc_code": "quar",
+  "sensor": "flt",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+  ],
+  "dropped_timestamps": [
+    "2022-01-24T03:58:00",
+    "2022-01-24T03:59:00",
+    "2022-01-27T06:31:00",
+    "2022-01-27T06:32:00",
+    "2022-05-20T02:07:00"
+  ],
+  "segments": []
+}

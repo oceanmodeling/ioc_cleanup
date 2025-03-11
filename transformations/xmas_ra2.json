@@ -1,0 +1,17 @@
+{
+  "ioc_code": "xmas",
+  "sensor": "ra2",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+  ],
+  "dropped_timestamps": [
+      "2023-07-07T12:10:00"
+  ],
+  "segments": []
+}

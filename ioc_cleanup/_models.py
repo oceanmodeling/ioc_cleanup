@@ -25,3 +25,4 @@ class Transformation(pydantic.BaseModel):
     dropped_date_ranges: list[tuple[datetime.datetime, datetime.datetime]] = []
     dropped_timestamps: list[datetime.datetime] = []
     segments: list[Segment] = []
+    tsunami: list[tuple[datetime.datetime, datetime.datetime]] = []

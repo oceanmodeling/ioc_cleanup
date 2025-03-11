@@ -5,10 +5,13 @@
   "skip": false,
   "wip": false,
   "start": "2022-01-01T00:00:00",
-  "end": "2023-11-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
   "high": null,
   "low": null,
   "dropped_date_ranges": [],
-  "dropped_timestamps": [],
+  "dropped_timestamps": [
+    "2024-10-10 12:50:00",
+    "2024-10-10 13:35:00"
+  ],
   "segments": []
 }

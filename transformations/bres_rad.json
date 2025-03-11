@@ -1,0 +1,21 @@
+{
+  "ioc_code": "bres",
+  "sensor": "rad",
+  "notes": "Many small gaps. Probably transmission errors",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    ["2022-03-27 03:00:00", "2022-03-27 03:59:00"],
+    ["2023-03-26 03:00:00", "2023-03-26 03:59:00"]
+
+  ],
+  "dropped_timestamps": [
+    "2022-11-08 13:55:00",
+    "2022-12-05 09:13:00"
+  ],
+  "segments": []
+}

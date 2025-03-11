@@ -1,0 +1,17 @@
+{
+  "ioc_code": "toul",
+  "sensor": "rad",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2022-01-01T00:00:00",
+  "end": "2025-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    ["2022-12-02T13:36:00", "2022-12-02T13:40:00"]
+  ],
+  "dropped_timestamps": [
+  ],
+  "segments": []
+}

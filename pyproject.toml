@@ -15,13 +15,14 @@ hvplot = "*"
 multifutures = "*"
 pandas = "*"
 panel = "*"
-searvey = {git = "https://github.com/oceanmodeling/searvey.git", rev = "dev"}
+searvey = "*"
 xarray = {version = "*", extras = ["accel", "parallel", "io"]}
 utide = "*"
 matplotlib = "*"
 ipympl = "*"
 pydantic = "*"
 fastparquet = "*"
+datashader = "*"
 
 [tool.poetry.group.dev.dependencies]
 covdefaults = "*"
@@ -34,6 +35,9 @@ pandas-stubs = "*"
 pytest = ">=7.0"
 pytest-cov = ">=3"
 ipywidgets = "*"
+bokeh = "*"
+jupyter-bokeh = "*"
+nbval = "*"
 
 [build-system]
 requires = ["poetry-core"]
