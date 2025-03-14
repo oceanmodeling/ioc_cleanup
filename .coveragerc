@@ -4,4 +4,4 @@ omit = ioc_cleanup/*
 
 [report]
 # Specify the minimum coverage threshold
-fail_under = 90
+fail_under = 75

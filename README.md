@@ -7,8 +7,8 @@ The core feature of this repo are the JSON files that contain the transformation
 ![demo](./notebooks/assets/ioc_cleanup_demo.png)
 
 ## DISCLAIMERS
- 1. This repository does contain IOC station data, nor deal with the downloading of IOC data. However an example is shown in the notebook, using the `searvey` package.
- 2. While this repository cleans IOC station data, the methodology could be applied to any other signal type
+ 1. This repository does **NOT** contain IOC station data, nor deal with the downloading of IOC data. However an example is shown in the notebook, using the `searvey` package.
+ 2. While this repository cleans IOC station data, the methodology could be applied to any other signal type or provider
 
 
 ## Getting Started
