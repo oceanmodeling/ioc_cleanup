@@ -8,7 +8,10 @@
   "end": "2025-01-01T00:00:00",
   "high": null,
   "low": null,
-  "dropped_date_ranges": [],
+  "dropped_date_ranges": [
+    ["2024-01-23T01:03:00", "2024-01-23T01:20:00"],
+    ["2024-03-18T16:25:00", "2024-03-18T16:28:00"]
+  ],
   "dropped_timestamps": [],
   "segments": [],
   "tsunami":[

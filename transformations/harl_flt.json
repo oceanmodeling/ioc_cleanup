@@ -8,7 +8,9 @@
   "end": "2025-01-01T00:00:00",
   "high": null,
   "low": null,
-  "dropped_date_ranges": [],
+  "dropped_date_ranges": [
+    ["2023-01-20 23:10:00", "2023-01-22 23:00:00"]
+  ],
   "dropped_timestamps": [
     "2022-01-02T11:40:00",
     "2022-01-04T15:00:00",

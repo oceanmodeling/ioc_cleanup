@@ -2,7 +2,7 @@
     "ioc_code": "garc",
     "sensor": "prs",
     "notes": "unusable",
-    "skip": false,
+    "skip": true,
     "wip": false,
     "start": "2022-01-01T00:00:00",
     "end": "2025-01-01T00:00:00",
