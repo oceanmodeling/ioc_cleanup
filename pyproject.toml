@@ -15,6 +15,7 @@ hvplot = "*"
 multifutures = "*"
 pandas = "*"
 panel = "*"
+pooch = "*"
 searvey = "*"
 xarray = {version = "*", extras = ["accel", "parallel", "io"]}
 utide = "*"
@@ -40,6 +41,7 @@ jupyter-bokeh = "*"
 nbval = "*"
 zensical = "*"
 mkdocstrings-python = "*"
+segno = "*"
 
 [build-system]
 requires = ["poetry-core"]
@@ -53,6 +55,9 @@ target-version = ['py311']
 minversion = "7.0"
 addopts = ["-ra", "--verbose", "--showlocals", "--tb=short", "--strict-markers", "--strict-config"]
 xfail_strict = true
+markers = [
+  "zenodo: tests that download the transformations archive from Zenodo",
+]
 log_cli = false
 log_cli_level = "info"
 testpaths = [

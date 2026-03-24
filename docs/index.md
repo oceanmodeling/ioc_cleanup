@@ -7,7 +7,7 @@ for cleaning tide gauge data from [IOC](https://www.ioc-sealevelmonitoring.org/l
 All stations with clean data between 1st of January 2020 and the 31st of december 2025.
 
 <iframe
-  src="cleaned_map.html"
+  src="assets/cleaned_map.html"
   width="100%"
   height="740"
   style="border:none;">
@@ -15,11 +15,6 @@ All stations with clean data between 1st of January 2020 and the 31st of decembe
 
 
 ## Getting Started
-
-### Prerequisites
-
-- Python 3.11+ (recommended)
-- ~24 GB free disk space for raw IOC 2020-2025 data
 
 ### Installation
 
@@ -36,18 +31,31 @@ import ioc_cleanup as C
 station = "abed"
 df_raw = searvey.fetch_ioc_station(station, "2020-01-01", "2026-01-01")
 
-trans = C.load_transformation_from_path(
-    "../transformations/abed_bub.json"
-)
+trans = C.load_transformation(station, "bub")
 
 df_clean = C.transform(df_raw, trans)
 ```
+
+## JSON transformations
+
+Each cleaned station is described by a single JSON file that records every
+operation applied to the raw signal, so the dataset is fully reproducible from
+the raw IOC data plus the transformations.
+
+- **Automatic** - `C.load_transformation(station, sensor)` downloads and caches
+  them from Zenodo on first use. See [Data Access](access_data.md).
+- **Zenodo** - the complete dataset includes `transformations.tar.gz`, if you
+  prefer to fetch them by hand.
+- **GitHub** - also mirrored on the
+  [GitHub releases](https://github.com/oceanmodeling/ioc_cleanup/releases).
+- **Build your own** - follow the [JSON schema](reference/json-schema.md) and
+  load it with `C.load_transformation_from_path(...)`.
 
 ## Example for `maya` station:
 
 ### From raw signal...
 <iframe
-  src="example.html"
+  src="assets/example.html"
   width="100%"
   height="710"
   style="border:none;">
@@ -57,7 +65,7 @@ df_clean = C.transform(df_raw, trans)
 
 ### ... to clean signal
 <iframe
-  src="example_clean.html"
+  src="assets/example_clean.html"
   width="100%"
   height="710"
   style="border:none;">

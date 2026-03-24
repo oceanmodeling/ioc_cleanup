@@ -11,6 +11,8 @@ Functions related to loading, applying, and managing cleaning transformations.
 
 ::: ioc_cleanup.load_transformation
 ::: ioc_cleanup.load_transformation_from_path
+::: ioc_cleanup.resolve_transformation_dir
+::: ioc_cleanup.get_transformation_paths
 
 ::: ioc_cleanup.transform
 ::: ioc_cleanup.clean
