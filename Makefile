@@ -30,3 +30,6 @@ deps:
 
 docs:
 	zensical build
+
+serve:
+	python -mpanel serve dashboard/cleanup_dashboard.py --port 60002
