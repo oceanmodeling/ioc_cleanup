@@ -26,7 +26,7 @@ In some cases, cleaning is easy and is just about removing spikes
 
     See details on the [JSON structure](reference/json-schema/)
 
-### Noise vs. Physical phenomena
+### Numerical vs. Physical phenomena
 
 It becomes more difficult when it comes to distinguishing noise (either numerical or physical e.g. boat wakes) from real physical events (like harbour seiches or tsunamis).
 
@@ -68,7 +68,7 @@ Same tsunami and station, detided:
 
     See details on the [JSON structure](reference/json-schema/)
 
-#### Noise - Numerical
+#### Numerical - Noise
 In some case, numerical noise is easy to isolate like for this station:
 
 <iframe
@@ -83,7 +83,24 @@ In some case, numerical noise is easy to isolate like for this station:
 
     See details on the [JSON structure](reference/json-schema/)
 
-#### Noise - Unknown
+#### Numerical - Flat signal
+Some stations can have parts of flat signal.
+
+<iframe
+  src="../flat.html"
+  width="100%"
+  height="710"
+  style="border:none;">
+</iframe>
+
+!!! tip "Advice for flat signal"
+    Remove flat parts from the data.
+
+    If the flat parts are long enough and easy to isolate, select the flat ranges and paste them in the `dropped_date_ranges`. If it is too complicated (like in this example), you can select multiple part of the data and paste in `dropped_timestamps`.
+
+    See details on the [JSON structure](reference/json-schema/)
+
+#### Numerical - Unknown
 In other case, the nature of the noise is difficult to identify. There could be lots of reasons:
 
  * physical induced noise:

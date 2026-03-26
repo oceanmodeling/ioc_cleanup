@@ -8,8 +8,8 @@ site_dir = "site"
 
 nav = [
   {"Home" = "index.md"},
-  {"Concept" = "concept.md"},
-  {"Reference" = [
+  {"Details" = "concept.md"},
+  {"User Guide" = [
     {"JSONs" = "reference/json-schema.md"},
     {"Data Architecture" = "reference/data-layout.md"},
     {"API" = "reference/python-api.md"},
@@ -17,8 +17,9 @@ nav = [
   {"Dashboard" = [
     {"Usage" = "workflows/dashboard.md"},
   ]},
-  {"Guidelines" = "guidelines.md"},
+  {"Cleaning Guidelines" = "guidelines.md"},
   {"Contributing" = "contributing.md"},
+  {"Bonus" = "tsunami.md"}
 ]
 
 [project.theme]

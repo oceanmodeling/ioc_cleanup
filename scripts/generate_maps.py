@@ -7,12 +7,34 @@ import hvplot.pandas  # noqa: F401
 import numpy as np
 import pandas as pd
 import panel as pn
+import tqdm
 
 import ioc_cleanup as C
 
-IOC = C.get_meta()
-MAX = 2
-YEAR = 2020
+MAX_WAVE_POINTS = 2
+KAMCHATKA_START = pd.Timestamp("2025-07-01")
+KAMCHATKA_END = pd.Timestamp("2025-10-01")
+TONGA_START = pd.Timestamp("2022-01-01")
+TONGA_END = pd.Timestamp("2022-01-31")
+DOCS_DIR = Path("docs")
+# plot kwargs
+MAP_COMMON = {
+    "geo": True,
+    "x": "lon",
+    "y": "lat",
+}
+MAP_BIG_POINTS = {
+    **MAP_COMMON,
+    **{"s": 100, "logz": True, "line_color": "k", "tiles": True, "hover_cols": "index"},
+}
+HIST = {
+    "grid": True,
+    "logy": True,
+    "bins": 35,
+    "ylim": (0.5, None),
+    "ylabel": "Number of stations",
+    "xlabel": "",
+}
 
 
 def extract_waves(time, eta, crossing="up"):
@@ -21,38 +43,35 @@ def extract_waves(time, eta, crossing="up"):
 
     Parameters
     ----------
-    time : pd.Series or np.ndarray
-        Time vector
-    eta : pd.Series or np.ndarray
-        Surface elevation
-    crossing : str
-        'up' or 'down'
+    time : array-like
+        Time vector.
+    eta : array-like
+        Surface elevation.
+    crossing : {'up', 'down'}
+        Zero-crossing direction.
 
     Returns
     -------
     pd.DataFrame
         Columns: ['wave', 'H', 'T', 't_crest', 't_trough']
     """
-
     eta = np.asarray(eta)
     time = np.asarray(time)
 
     fluc = eta - eta.mean()
     sgn = np.sign(fluc)
 
-    # Zero-crossing indices
     if crossing == "up":
         zc = np.where((sgn[:-1] < 0) & (sgn[1:] > 0))[0]
-    else:  # down-crossing
+    else:
         zc = np.where((sgn[:-1] > 0) & (sgn[1:] < 0))[0]
 
     waves = []
-
     for i in range(len(zc) - 1):
         i0 = zc[i] + 1
         i1 = zc[i + 1]
 
-        if i1 - i0 < MAX:
+        if i1 - i0 < MAX_WAVE_POINTS:
             continue
 
         segment = fluc[i0:i1]
@@ -61,13 +80,10 @@ def extract_waves(time, eta, crossing="up"):
         crest_idx = np.argmax(segment)
         trough_idx = np.argmin(segment)
 
-        a_crest = segment[crest_idx]
-        a_trough = segment[trough_idx]
-
         waves.append(
             {
                 "wave": i + 1,
-                "H": a_crest + abs(a_trough),
+                "H": segment[crest_idx] + abs(segment[trough_idx]),
                 "T": time[i1] - time[i0],
                 "t_crest": seg_time[crest_idx],
                 "t_trough": seg_time[trough_idx],
@@ -77,111 +93,153 @@ def extract_waves(time, eta, crossing="up"):
     return pd.DataFrame(waves)
 
 
-# cleaned stations
-clean_stations_list = []
-not_yet_clean_stations_list = []
+def save_map(hv_map, filename: str, height: int = 700) -> None:
+    """Save an hvplot map to an HTML file via Panel."""
+    pane = pn.Row(
+        pn.pane.HoloViews(
+            hv_map.opts(responsive=True),
+            sizing_mode="stretch_width",
+            height=height,
+        ),
+        width_policy="max",
+    )
+    pane.save(str(DOCS_DIR / filename))
 
-# kamchaptka tsunami
-start = pd.Timestamp("2025-07-01")
-end = pd.Timestamp("2025-10-01")
-folder = Path("./data")
-recorded_tsunamis = {}
-for station in IOC.ioc_code.tolist():
-    candidates = sorted(glob.glob(f"./transformations/{station}*.json"))
-    if len(candidates) == 0:
-        pass
-    else:
-        for path in candidates:
+
+def get_removed_ratio(meta: pd.DataFrame) -> pd.DataFrame:
+    ioc_codes = meta.ioc_code.to_list()
+    meta["cleaned_ratio"] = 0
+
+    for station in tqdm.tqdm(ioc_codes):
+        for path in sorted(glob.glob(f"./transformations/{station}_*.json")):
             t = C.load_transformation_from_path(path)
-            # cleaned station test
-            if not t.skip:
-                clean_stations_list.append(station)
-                if t.start.year > YEAR:
-                    not_yet_clean_stations_list.append(station)
+            raw = C.load_station(station, C.DATA_DIR, start_year=2020, end_year=2026)
+            total = len(raw[t.sensor].dropna().values)
+            clean = C.clean(raw, t.ioc_code, t.sensor)
+            clean_total = len(clean.dropna().values)
+            meta.loc[meta.ioc_code == station, "cleaned_ratio"] = 1 - clean_total / total
 
-            # tsunami test
-            for ts in t.tsunami:
-                if ts[0] > start and ts[1] < end:
-                    surge = C.load_surge_ts_for_year(t.ioc_code, t.sensor, 2025, folder, demean=True)
-                    s_ = surge.loc[ts[0] : ts[1]] - surge.loc[ts[0] : ts[1]].mean()
-                    tsunami_waves = extract_waves(s_.index, s_).sort_values(by="H", ascending=False, ignore_index=True)
-                    recorded_tsunamis[station] = {
-                        "wave number": tsunami_waves.loc[0, "wave"],
-                        "tsunami wave height": tsunami_waves.loc[0, "H"],
-                        "tsunami wave period": tsunami_waves.loc[0, "T"],
-                    }
-
-# Kamchatka tsunami
-kamchatka = pd.DataFrame(recorded_tsunamis).T.join(
-    IOC.set_index("ioc_code")[["lon", "lat"]],
-    how="left",
-)
-kamchatka["tsunami wave height"] = kamchatka["tsunami wave height"].astype(float)
-kamchatka.head()
-map_ = kamchatka.hvplot.points(
-    geo=True,
-    x="lon",
-    y="lat",
-    tiles=True,
-    c="tsunami wave height",
-    s=100,
-    clim=(0, 2),
-    line_color="k",
-    cmap="rainbow4",
-    title="tsunami wave heights recorded for Kamchatka tsunami",
-    hover_cols="index",
-)
-pane_ = pn.Row(
-    pn.pane.HoloViews(
-        map_.opts(responsive=True),
-        sizing_mode="stretch_width",
-        height=700,
-    ),
-    width_policy="max",
-)
-pane_.save("docs/tsunami_map.html")
+    return meta
 
 
-# All IOC stations export
-all_ioc_map = IOC.hvplot.points(
-    geo=True,
-    x="lon",
-    y="lat",
-    c="k",
-    s=2,
-    label="All IOC stations",
-    hover_cols="ioc_code",
-)
-clean_ioc_map = IOC[IOC.ioc_code.isin(clean_stations_list)].hvplot.points(
-    geo=True,
-    x="lon",
-    y="lat",
-    c="g",
-    s=50,
-    tiles=True,
-    title="Cleaned IOC stations",
-    label="Cleaned IOC stations",
-    hover_cols="ioc_code",
-    legend="bottom_right",
-)
-not_yet_clean_ioc_map = IOC[IOC.ioc_code.isin(not_yet_clean_stations_list)].hvplot.points(
-    geo=True,
-    x="lon",
-    y="lat",
-    c="orange",
-    s=50,
-    tiles=True,
-    label="Remaining raw IOC stations",
-    hover_cols="ioc_code",
-    legend="bottom_right",
-)
-map_ = clean_ioc_map * not_yet_clean_ioc_map * all_ioc_map
-pane_ = pn.Row(
-    pn.pane.HoloViews(
-        map_.opts(responsive=True),
-        sizing_mode="stretch_width",
-        height=700,
-    ),
-    width_policy="max",
-)
-pane_.save("docs/cleaned_map.html")
+def detect_tsunamis(ioc_codes: list[str], tsunami_start: pd.Timestamp, tsunami_end: pd.Timestamp) -> dict:
+    """Detect tsunami events within the configured time window."""
+    recorded = {}
+    for station in ioc_codes:
+        for path in sorted(glob.glob(f"./transformations/{station}*.json")):
+            t = C.load_transformation_from_path(path)
+            for ts_start, ts_end in t.tsunami:
+                if ts_start <= tsunami_start or ts_end >= tsunami_end:
+                    continue
+                surge = C.load_surge_ts_for_year(t.ioc_code, t.sensor, tsunami_start.year, C.DATA_DIR, demean=True)
+                s_ = surge.loc[ts_start:ts_end]
+                s_ -= s_.mean()
+                waves = extract_waves(s_.index, s_).sort_values("H", ascending=False, ignore_index=True)
+                recorded[station] = {
+                    "wave number": waves.loc[0, "wave"],
+                    "tsunami wave height": waves.loc[0, "H"],
+                    "tsunami wave period": waves.loc[0, "T"],
+                }
+    return recorded
+
+
+def make_tsunami_map(recorded_tsunamis: dict, ioc: pd.DataFrame, tsunami_name: str) -> None:
+    """Build and save the Kamchatka tsunami map."""
+    kamchatka = (
+        pd.DataFrame(recorded_tsunamis)
+        .T.join(ioc.set_index("ioc_code")[["lon", "lat"]], how="left")
+        .astype({"tsunami wave height": float})
+    )
+    hv_map = kamchatka.hvplot.points(
+        c="tsunami wave height",
+        clim=(0, 2),
+        cmap="rainbow4",
+        title=f"Tsunami wave heights recorded for {tsunami_name} tsunami",
+        **MAP_BIG_POINTS,
+    )
+    save_map(hv_map, f"{tsunami_name.lower()}_map.html")
+
+
+def make_cleaned_stations_map(ioc: pd.DataFrame, clean: list[str]) -> None:
+    """Build and save the cleaned stations map."""
+    all_map = ioc.hvplot.points(
+        **MAP_COMMON,
+        c="k",
+        s=2,
+        label="All IOC stations",
+        hover_cols="ioc_code",
+    )
+    clean_map = ioc[ioc.ioc_code.isin(clean)].hvplot.points(
+        **MAP_COMMON,
+        c="g",
+        s=50,
+        tiles=True,
+        title="Cleaned IOC stations",
+        label="Cleaned IOC stations",
+        hover_cols="ioc_code",
+        legend="bottom_right",
+    )
+    save_map(clean_map * all_map, "cleaned_map.html")
+
+
+def make_availability_map(stats: pd.DataFrame) -> None:
+    """Build and save the data availability map."""
+    hv_map = stats.hvplot.points(
+        c="availability",
+        clim=(0.1, 1),
+        cmap="rainbow4_r",
+        title="Data availability after cleaning, from 0 to 1 (or 100%)",
+        **MAP_BIG_POINTS,
+    )
+    save_map(hv_map, "data_availability_map.html")
+
+
+def make_cleaned_ratio_map(stats: pd.DataFrame) -> None:
+    """Build and save the data availability map."""
+    hv_map = stats.hvplot.points(
+        c="cleaned_ratio",
+        clim=(0.0001, 1),
+        cmap="rainbow4",
+        title="Data removed, from 0 to 1 (or 100%)",
+        **MAP_BIG_POINTS,
+    )
+    save_map(hv_map, "data_removed_map.html")
+
+
+def make_hist(df: pd.DataFrame, var: str, title: str, name: str):
+    hv_graph = df[var].hvplot.hist(**HIST, title=title)
+    save_map(hv_graph, name, height=300)
+
+
+def main():
+    ioc = C.get_meta()
+    stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.json")
+    stats_with_removed_ratio = get_removed_ratio(stats)
+
+    kamchatka_tsunamis = detect_tsunamis(stats.ioc_code.tolist(), KAMCHATKA_START, KAMCHATKA_END)
+    tonga_tsunamis = detect_tsunamis(stats.ioc_code.to_list(), TONGA_START, TONGA_END)
+
+    DOCS_DIR.mkdir(exist_ok=True)
+
+    make_tsunami_map(kamchatka_tsunamis, ioc, "Kamchatka")
+    make_tsunami_map(tonga_tsunamis, ioc, "Tonga")
+    make_cleaned_stations_map(ioc, stats.ioc_code.to_list())
+    make_availability_map(stats)
+    make_cleaned_ratio_map(stats_with_removed_ratio)
+
+    make_hist(
+        stats_with_removed_ratio,
+        "availability",
+        "Data availability after cleaning, from 0 to 1 (or 100%)",
+        "data_availability_hist.html",
+    )
+    make_hist(
+        stats_with_removed_ratio,
+        "cleaned_ratio",
+        "Data removed, from 0 to 1 (or 100%)",
+        "data_removed_hist.html",
+    )
+
+
+if __name__ == "__main__":
+    main()

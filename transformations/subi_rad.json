@@ -1,6 +1,6 @@
 {
-  "ioc_code": "mani",
-  "sensor": "prs",
+  "ioc_code": "subi",
+  "sensor": "rad",
   "notes": "",
   "skip": false,
   "wip": false,
@@ -4638,6 +4638,5 @@
     "2025-11-11T16:07:00",
     "2025-11-11T16:10:00",
     "2025-11-27T11:10:00"
-  ],
-  "segments": []
+  ]
 }

@@ -1,4 +1,4 @@
-# Motivation
+## Why `ioc_cleanup`?
 
 Cleaning tide gauge data is often:
 
@@ -57,3 +57,46 @@ declaring:
 - notes and metadata
 
 More details in the [JSON format](./reference/json-schema.md)
+
+
+## Dataset Details
+
+### Cleaned Stations
+<iframe
+  src="../cleaned_map.html"
+  width="100%"
+  height="740"
+  style="border:none;">
+</iframe>
+
+### Data availability in the 2020 - 2025 period
+
+<iframe
+  src="../data_availability_map.html"
+  width="100%"
+  height="590"
+  style="border:none;">
+</iframe>
+
+<iframe
+  src="../data_availability_hist.html"
+  width="100%"
+  height="320"
+  style="border:none;">
+</iframe>
+
+### Ratio of data removed in the 2020 - 2025 period
+
+<iframe
+  src="../data_removed_map.html"
+  width="100%"
+  height="590"
+  style="border:none;">
+</iframe>
+
+<iframe
+  src="../data_removed_hist.html"
+  width="100%"
+  height="320"
+  style="border:none;">
+</iframe>

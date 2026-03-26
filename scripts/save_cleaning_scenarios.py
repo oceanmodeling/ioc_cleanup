@@ -27,7 +27,7 @@ def save_interactive_plot(
 ) -> None:
     item = IOC[IOC.ioc_code == station].iloc[0]
     if clean:
-        C._plots.load_surge_tide(station, sensor, start.year, surge=surge, demean=True)
+        ts = C._plots.load_surge_tide(station, sensor, start.year, surge=surge, demean=True)
     else:
         ts = C._searvey.load_station(station, folder, 2020, 2026).sort_index()
         ts = ts[sensor]
@@ -129,6 +129,13 @@ RUNS = [
         "start": "2023-06-27",
         "end": "2023-07-16",
         "out": "docs/step_long.html",
+    },
+    {
+        "station": "LI11",
+        "sensor": "rad",
+        "start": "2025-01-28",
+        "end": "2025-02-03",
+        "out": "docs/flat.html",
     },
 ]
 
