@@ -3,10 +3,13 @@ from __future__ import annotations
 import glob
 from pathlib import Path
 
+import geopandas as gp
+import holoviews as hv
 import hvplot.pandas  # noqa: F401
 import numpy as np
 import pandas as pd
 import panel as pn
+import shapely.geometry
 import tqdm
 
 import ioc_cleanup as C
@@ -34,6 +37,19 @@ HIST = {
     "ylim": (0.5, None),
     "ylabel": "Number of stations",
     "xlabel": "",
+}
+BAR = {
+    "grid": True,
+    "ylabel": "Number of cleaned stations",
+    "xlabel": "Ocean",
+    "c": "#D2EBF9",
+    "legend": "top",
+}
+LINE = {
+    "ylabel": "Percentage of IOC stations cleaned",
+    "label": "Percentage of TGs cleaned / over total IOC stations",
+    "color": "#0F60A8",
+    "size": 80,
 }
 
 
@@ -91,6 +107,39 @@ def extract_waves(time, eta, crossing="up"):
         )
 
     return pd.DataFrame(waves)
+
+
+@pn.cache
+def load_world_oceans():
+    df = gp.read_file(
+        "https://gist.githubusercontent.com/tomsail/2fa52d9667312b586e7d3baee123b57b/raw/f121bd446e7c276e7230fb9896e4d487d63a8cb1/world_maritime_sectors.json",
+    )
+    return df
+
+
+def find_ocean_for_station(station, oceans_df, xstr="longitude", ystr="latitude"):
+    point = shapely.geometry.Point(station[xstr], station[ystr])
+    for _, ocean in oceans_df.iterrows():
+        if point.within(ocean["geometry"].buffer(0)):
+            # Return a tuple with the two desired column values
+            return ocean["name"], ocean["ocean"]
+    # Return a tuple with None for both values if no match is found
+    return None, None
+
+
+def assign_oceans(df):
+    oceans_ = load_world_oceans()
+    unique_stations = df.ioc_code.unique()
+    mapping = {}
+    for unique_station in unique_stations:
+        s = df[df.ioc_code == unique_station].iloc[0]
+        mapping[unique_station] = find_ocean_for_station(s, oceans_, "lon", "lat")
+    df[["name", "ocean"]] = df.apply(
+        lambda station: mapping[station.ioc_code],
+        axis=1,
+        result_type="expand",
+    )
+    return df
 
 
 def save_map(hv_map, filename: str, height: int = 700) -> None:
@@ -174,6 +223,8 @@ def make_cleaned_stations_map(ioc: pd.DataFrame, clean: list[str]) -> None:
         c="g",
         s=50,
         tiles=True,
+        xlim=(-180, 180),
+        ylim=(-70, 82.53),
         title="Cleaned IOC stations",
         label="Cleaned IOC stations",
         hover_cols="ioc_code",
@@ -206,20 +257,49 @@ def make_cleaned_ratio_map(stats: pd.DataFrame) -> None:
     save_map(hv_map, "data_removed_map.html")
 
 
-def make_hist(df: pd.DataFrame, var: str, title: str, name: str):
-    hv_graph = df[var].hvplot.hist(**HIST, title=title)
+def make_hist(df: pd.DataFrame, var: str, title: str, name: str, **kwargs):
+    hv_graph = df[var].hvplot.hist(**kwargs, title=title)
     save_map(hv_graph, name, height=300)
 
 
+def make_bar(df: pd.DataFrame, all_meta: pd.DataFrame, var: str, title: str, name: str):
+    cleaned_counts = df[var].value_counts().sort_index()
+    all_counts = all_meta[var].value_counts().sort_index()
+    proportion = (cleaned_counts / all_counts * 100).dropna()
+
+    combined = pd.DataFrame(
+        {
+            "Cleaned stations": cleaned_counts,
+            "Percentage of total cleaned": proportion.reindex(cleaned_counts.index),
+        },
+    )
+
+    bars_count = combined["Cleaned stations"].hvplot.bar(**BAR)
+    line_pct = combined["Percentage of total cleaned"].hvplot(**LINE)
+
+    def rotate_labels(plot):
+        plot.state.xaxis.major_label_orientation = 0.785  # radians, ~45°
+
+    overlay = (bars_count * line_pct).opts(
+        hv.opts.Overlay(multi_y=True, title=title, hooks=[rotate_labels]),
+    )
+    save_map(overlay, name, height=370)
+
+
 def main():
+    DOCS_DIR.mkdir(exist_ok=True)
+
     ioc = C.get_meta()
     stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.json")
+    stats = assign_oceans(stats)
+    stats = assign_oceans(stats)
+    ioc = assign_oceans(ioc)
+    stats.to_csv(DOCS_DIR / "assets" / "cleaned_ioc_stations.csv", index=False)
+
     stats_with_removed_ratio = get_removed_ratio(stats)
 
     kamchatka_tsunamis = detect_tsunamis(stats.ioc_code.tolist(), KAMCHATKA_START, KAMCHATKA_END)
     tonga_tsunamis = detect_tsunamis(stats.ioc_code.to_list(), TONGA_START, TONGA_END)
-
-    DOCS_DIR.mkdir(exist_ok=True)
 
     make_tsunami_map(kamchatka_tsunamis, ioc, "Kamchatka")
     make_tsunami_map(tonga_tsunamis, ioc, "Tonga")
@@ -232,12 +312,22 @@ def main():
         "availability",
         "Data availability after cleaning, from 0 to 1 (or 100%)",
         "data_availability_hist.html",
+        **HIST,
     )
     make_hist(
         stats_with_removed_ratio,
         "cleaned_ratio",
         "Data removed, from 0 to 1 (or 100%)",
         "data_removed_hist.html",
+        **HIST,
+    )
+    make_bar(
+        stats,
+        ioc,
+        "ocean",
+        f"Repartition of the {len(stats)} cleaned stations across oceans",
+        "coverage_oceans.html",
+        **BAR,
     )
 
 

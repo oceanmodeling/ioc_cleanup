@@ -33,3 +33,6 @@ docs:
 
 serve:
 	python -mpanel serve dashboard/cleanup_dashboard.py --port 60002
+
+poster:
+	python -mpanel serve scripts/poster.py --autoreload

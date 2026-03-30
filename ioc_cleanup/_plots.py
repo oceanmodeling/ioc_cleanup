@@ -152,6 +152,7 @@ def plot_line(df: pd.Series) -> hv.Curve:
         grid=True,
         alpha=0.5,
         c="r",
+        ylabel="Water level (m)",
     ).opts(
         responsive=True,
         ylim=(df.min() * 1.001, df.max() * 1.001),

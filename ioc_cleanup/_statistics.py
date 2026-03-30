@@ -43,7 +43,7 @@ def calc_raw_statistics(sr: pd.Series[float]) -> dict[str, T.Any]:
         "skew": sr.skew(),
         "kurtosis": sr.kurtosis(),
     }
-    data.update(**sr.attrs)  # type: ignore[misc] # Keywords must be string
+    data.update(**sr.attrs)  # type: ignore[arg-type] # Keywords must be string
     return data
 
 

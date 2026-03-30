@@ -19,7 +19,8 @@ nav = [
   ]},
   {"Cleaning Guidelines" = "guidelines.md"},
   {"Contributing" = "contributing.md"},
-  {"Bonus" = "tsunami.md"}
+  {"Bonus" = "tsunami.md"},
+  {"Poster"= "poster.md"}
 ]
 
 [project.theme]

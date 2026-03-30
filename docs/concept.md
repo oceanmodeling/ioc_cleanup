@@ -85,6 +85,14 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
   style="border:none;">
 </iframe>
 
+### Coverage across oceans
+<iframe
+  src="../coverage_oceans.html"
+  width="100%"
+  height="330"
+  style="border:none;">
+</iframe>
+
 ### Data availability in the 2020 - 2025 period
 
 <iframe
