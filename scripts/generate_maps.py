@@ -19,7 +19,7 @@ KAMCHATKA_START = pd.Timestamp("2025-07-01")
 KAMCHATKA_END = pd.Timestamp("2025-10-01")
 TONGA_START = pd.Timestamp("2022-01-01")
 TONGA_END = pd.Timestamp("2022-01-31")
-DOCS_DIR = Path("docs")
+DOCS_DIR = Path("docs/assets")
 # plot kwargs
 MAP_COMMON = {
     "geo": True,

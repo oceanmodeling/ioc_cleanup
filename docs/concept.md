@@ -79,7 +79,7 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
 
 ### Cleaned Stations
 <iframe
-  src="../cleaned_map.html"
+  src="./assets/cleaned_map.html"
   width="100%"
   height="740"
   style="border:none;">
@@ -87,7 +87,7 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
 
 ### Coverage across oceans
 <iframe
-  src="../coverage_oceans.html"
+  src="./assets/coverage_oceans.html"
   width="100%"
   height="330"
   style="border:none;">
@@ -96,14 +96,14 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
 ### Data availability in the 2020 - 2025 period
 
 <iframe
-  src="../data_availability_map.html"
+  src="./assets/data_availability_map.html"
   width="100%"
   height="590"
   style="border:none;">
 </iframe>
 
 <iframe
-  src="../data_availability_hist.html"
+  src="./assets/data_availability_hist.html"
   width="100%"
   height="320"
   style="border:none;">
@@ -112,14 +112,14 @@ stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.js
 ### Ratio of data removed in the 2020 - 2025 period
 
 <iframe
-  src="../data_removed_map.html"
+  src="./assets/data_removed_map.html"
   width="100%"
   height="590"
   style="border:none;">
 </iframe>
 
 <iframe
-  src="../data_removed_hist.html"
+  src="./assets/data_removed_hist.html"
   width="100%"
   height="320"
   style="border:none;">

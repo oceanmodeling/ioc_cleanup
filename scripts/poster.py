@@ -149,5 +149,4 @@ main = pn.Row(
 )
 
 main.save("./docs/assets/poster.html", title="IOC Cleanup Poster EGU26", embed=True)
-# main.save("./docs/assets/poster.svg", title="IOC Cleanup Poster EGU26", as_svg=True, embed=True)
 main.servable()
