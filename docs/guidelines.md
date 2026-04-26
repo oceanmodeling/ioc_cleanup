@@ -196,3 +196,13 @@ Some steps - or offsets - can be caused by mulitple reasons:
 !!! warning "Subjectivity"
      * Cleaning decisions are inherently subjective
      * Different operators may disagree on what should be discarded
+
+### De-tiding
+
+!!! warning "Chunks length for de-tiding"
+    Although `ioc_cleanup` does not directly tackle the de-tiding problem, it leverages de-tiding methods to better isolate and flag bad data on the tide gauges.
+
+    Here are some resources on this matter:
+
+    * Github discussion on [Utide](https://github.com/orgs/oceanmodeling/discussions/25)
+    * Detiding Theory and Practices, cited in the [Book of tides](https://www.researchgate.net/publication/280722791_De-tiding_Theory_and_practice)
