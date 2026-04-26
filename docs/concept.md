@@ -1,4 +1,4 @@
-# Motivation
+## Why `ioc_cleanup`?
 
 Cleaning tide gauge data is often:
 
@@ -57,3 +57,70 @@ declaring:
 - notes and metadata
 
 More details in the [JSON format](./reference/json-schema.md)
+
+
+## Dataset Details
+
+The following figures have been generated with the helper functions in `scripts/` folder:
+
+ 1. `download_ioc.py` to download IOC stations
+ 2. `generate_maps.py` to create maps and graphs for the online documentation
+ 3. `save_cleaning_scenarios.py` to create the time series graphs used in the online documentation
+
+Steps 2 and 3 require to have run step 1 for all cleaned IOC stations.
+
+The cleaned stations dataset can be retrieved with:
+
+```python
+import ioc_cleanup as C
+ioc = C.get_meta()
+stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.json")
+```
+
+### Cleaned Stations
+<iframe
+  src="./assets/cleaned_map.html"
+  width="100%"
+  height="740"
+  style="border:none;">
+</iframe>
+
+### Coverage across oceans
+<iframe
+  src="./assets/coverage_oceans.html"
+  width="100%"
+  height="330"
+  style="border:none;">
+</iframe>
+
+### Data availability in the 2020 - 2025 period
+
+<iframe
+  src="./assets/data_availability_map.html"
+  width="100%"
+  height="590"
+  style="border:none;">
+</iframe>
+
+<iframe
+  src="./assets/data_availability_hist.html"
+  width="100%"
+  height="320"
+  style="border:none;">
+</iframe>
+
+### Ratio of data removed in the 2020 - 2025 period
+
+<iframe
+  src="./assets/data_removed_map.html"
+  width="100%"
+  height="590"
+  style="border:none;">
+</iframe>
+
+<iframe
+  src="./assets/data_removed_hist.html"
+  width="100%"
+  height="320"
+  style="border:none;">
+</iframe>

@@ -152,6 +152,7 @@ def plot_line(df: pd.Series) -> hv.Curve:
         grid=True,
         alpha=0.5,
         c="r",
+        ylabel="Water level (m)",
     ).opts(
         responsive=True,
         ylim=(df.min() * 1.001, df.max() * 1.001),
@@ -206,7 +207,10 @@ def select_points() -> T.Any:
             selection.add_subscriber(lambda index: print_all_points(df=df, indices=index, text_box=points_all))
             selection.add_subscriber(lambda index: print_segment(df=df, indices=index, text_box=segment))
 
-            plot = curve * points
+            item = _tools.IOC[_tools.IOC.ioc_code == station].iloc[0]
+            plot = (curve * points).opts(
+                title=f"{item.location} ({item.country}) - ioc_code: {item.ioc_code}, sensor: {sensor}",
+            )
 
         except Exception as e:
             ts = pd.date_range(f"{year}", f"{year+1}", freq="24h")

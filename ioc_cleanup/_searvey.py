@@ -87,6 +87,11 @@ def download_year_station(
         year: Year to download.
         data_folder: Base directory for storing downloaded data.
     """
+
+    from importlib.metadata import version
+
+    vers_dict = {"ioc_cleanup_version": version("ioc_cleanup")}
+
     data_folder = os.path.abspath(data_folder)
     year_folder = os.path.join(data_folder, str(year))
     os.makedirs(year_folder, exist_ok=True)
@@ -96,8 +101,11 @@ def download_year_station(
         dict_df = download_raw([station], start, end)
         df = dict_df[station]
         if not df.empty:
-            df.to_parquet(f"{year_folder}/{station}.parquet")
             logger.info(f"  Saved {station} for {year}")
+            ioc = get_meta()
+            meta = ioc[ioc.ioc_code == station].iloc[0].to_dict()
+            df.attrs = {**vers_dict, **{k: str(v) for k, v in meta.items()}}  # type: ignore[dict-item]
+            df.to_parquet(f"{year_folder}/{station}.parquet")
     except Exception as e:
         logger.error(f"Error for {station} in {year}: {e}")
 

@@ -126,17 +126,25 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
     return df
 
 
-def demean_signal(df: pd.Series) -> pd.Series:
+def get_segments(df: pd.Series) -> list[pd.Series]:
+    df = df.copy()
     if len(df.attrs["breakpoints"]) > 0:
         chunks = []
         prev = df.index.min()
         for bp in df.attrs["breakpoints"]:
-            mean = df.loc[prev:bp].mean()
-            chunks.append(df.loc[prev:bp] - mean)
+            chunks.append(df.loc[prev:bp])
             prev = bp
-        mean = df.loc[prev:].mean()
-        chunks.append(df.loc[prev:] - mean)
-        df = pd.concat(chunks)
+        chunks.append(df.loc[prev:])
+    else:
+        chunks = [df]
+    return chunks
+
+
+def demean_signal(df: pd.Series) -> pd.Series:
+    chunks = get_segments(df)
+    for ichunk, chunk in enumerate(chunks):
+        chunks[ichunk] -= chunk.mean()
+    df = pd.concat(chunks)
     return df
 
 
@@ -144,8 +152,7 @@ def clean(df: pd.DataFrame, station: str, sensor: str) -> pd.Series:
     """
     Clean a raw IOC time series using the corresponding transformation file.
 
-    This is a convenience wrapper around `transform` that loads the
-    transformation from disk and returns a single sensor series.
+    Wrapper around `transform` function: returns a single sensor series.
 
     Parameters:
         df: Raw IOC station data.
