@@ -26,6 +26,9 @@ DEMEAN = True
 YEAR = 2020
 YEARS = [2020, 2021]
 EPS = 1e-6
+# Lower bound on the number of station/sensor configs in the Zenodo archive.
+# The record currently ships 442; this only guards against a truncated download.
+MIN_TRANSFORMATIONS = 400
 IOC = C.get_meta()
 
 
@@ -44,7 +47,7 @@ def test_download_station_data(station, data_dir):
 ## Testing cleaning
 @IOC_SAMPLE
 def test_load_clean_ts_for_year_demean(station, data_dir):
-    series = C.load_clean_ts_for_year(
+    series, _ = C.load_clean_ts_for_year(
         station=station,
         sensor="rad",
         year=YEAR,
@@ -106,10 +109,39 @@ def test_get_notes():
     assert notes == "After 2022-11 it is good. Before that too many spikes"
 
 
+def test_transformation_ioc_code_matches_filename():
+    paths = C._tools.get_transformation_paths()
+    for path in sorted(paths):
+        station, sensor = path.stem.rsplit("_", 1)
+        t = C.load_transformation(station, sensor)
+        assert station == t.ioc_code
+        assert sensor == t.sensor
+
+
+def test_registry_points_at_zenodo_doi():
+    assert C._constants.REGISTRY.base_url == f"doi:{C._constants.ZENODO_DOI}/"
+    assert C._constants.TRANSFORMATIONS_ARCHIVE in C._constants.REGISTRY.registry
+
+
+@pytest.mark.zenodo
+def test_resolve_transformation_dir_from_zenodo(monkeypatch, tmp_path):
+    # Pretend there is no local checkout so the pooch download path is used.
+    # The checksum in the registry is verified by pooch itself, so a corrupted
+    # or moved archive makes this fail.
+    monkeypatch.setattr(C._tools, "JSON_DIR", tmp_path / "missing")
+    resolved = C._tools.resolve_transformation_dir()
+    assert resolved.is_dir()
+    jsons = sorted(resolved.glob("*.json"))
+    assert len(jsons) > MIN_TRANSFORMATIONS
+    station, sensor = jsons[0].stem.rsplit("_", 1)
+    t = C.load_transformation(station, sensor, src_dir=resolved)
+    assert t.ioc_code == station
+
+
 @IOC_SAMPLE
 def test_load_surge_tide_switch(station, data_dir):
-    clean = P.load_surge_tide(station, "rad", 2020, surge=False, demean=True, folder=data_dir)
-    surge = P.load_surge_tide(station, "rad", 2020, surge=True, demean=True, folder=data_dir)
+    clean, _ = P.load_surge_tide(station, "rad", 2020, surge=False, demean=True, folder=data_dir)
+    surge, _ = P.load_surge_tide(station, "rad", 2020, surge=True, demean=True, folder=data_dir)
     opts = T.OPTS
     lat = IOC[IOC.ioc_code == station].lat.values[0]
     opts["lat"] = lat
