@@ -26,6 +26,7 @@ DEMEAN = True
 YEAR = 2020
 YEARS = [2020, 2021]
 EPS = 1e-6
+SCALE = -1.0
 # Lower bound on the number of station/sensor configs in the Zenodo archive.
 # The record currently ships 442; this only guards against a truncated download.
 MIN_TRANSFORMATIONS = 400
@@ -102,6 +103,50 @@ def test_print_segment():
     box = pn.widgets.TextAreaInput()
     P.print_segment(_series(), [0, 2], box)
     assert '"offset"' in box.value
+    assert '"scale"' in box.value
+
+
+def _raw_frame():
+    return pd.DataFrame(
+        {"rad": [1.0, 2.0, 3.0], "prs": [1.0, 2.0, 3.0]},
+        index=pd.date_range("2020-01-01", periods=3, freq="h"),
+    )
+
+
+def _transformation(**kwargs):
+    return C.Transformation(
+        ioc_code="test",
+        sensor="rad",
+        start=pd.Timestamp("2020-01-01"),
+        end=pd.Timestamp("2020-01-02"),
+        **kwargs,
+    )
+
+
+def test_transform_scale_offset_defaults_to_noop():
+    df = C.transform(_raw_frame(), _transformation())
+    pd.testing.assert_series_equal(df["rad"], _raw_frame()["rad"])
+
+
+def test_transform_applies_scale_and_offset_to_sensor_only():
+    df = C.transform(_raw_frame(), _transformation(scale=-1.0, offset=0.5))
+    expected = _raw_frame()["rad"] * -1.0 + 0.5
+    pd.testing.assert_series_equal(df["rad"], expected)
+    # other sensors are untouched
+    pd.testing.assert_series_equal(df["prs"], _raw_frame()["prs"])
+
+
+def test_transform_scale_does_not_resurrect_dropped_values():
+    trans = _transformation(scale=-1.0, dropped_timestamps=[pd.Timestamp("2020-01-01T01:00:00")])
+    df = C.transform(_raw_frame(), trans)
+    assert df["rad"].isna().sum() == 1
+    assert df["rad"].iloc[0] == SCALE
+
+
+def test_inverted_stations_are_flagged_with_negative_scale():
+    for station, sensor in (("alak2", "pwl"), ("mona2", "pwl")):
+        trans = C.load_transformation(station, sensor)
+        assert trans.scale == SCALE
 
 
 def test_get_notes():

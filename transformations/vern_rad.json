@@ -8,7 +8,9 @@
   "end": "2026-01-01T00:00:00",
   "high": null,
   "low": null,
-  "dropped_date_ranges": [],
+  "dropped_date_ranges": [
+    ["2020-01-01T00:09:00", "2020-03-04T19:24:00"]
+  ],
   "dropped_timestamps": [
     "2020-03-06T13:20:00",
     "2020-03-17T19:56:00",

@@ -1,7 +1,7 @@
 {
   "ioc_code": "ganm",
   "sensor": "ra3",
-  "notes": "",
+  "notes": "data starts in dec 2023",
   "skip": false,
   "wip": false,
   "start": "2020-01-01T00:00:00",
@@ -9,7 +9,7 @@
   "high": null,
   "low": null,
   "dropped_date_ranges": [
-    ["2022-01-01T00:00:00","2023-12-05T12:50:00"]
+    ["2020-01-01T00:00:00","2023-12-05T12:50:00"]
   ],
   "dropped_timestamps": [
     "2021-03-01T21:33:00",

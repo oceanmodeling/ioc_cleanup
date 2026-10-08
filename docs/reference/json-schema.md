@@ -68,7 +68,9 @@ df_clean = C.transform(df_raw, trans)
     "2024-09-07 12:00:00"
   ],
   "breakpoints": [],
-  "tsunami": []
+  "tsunami": [],
+  "scale": 1.0,
+  "offset": 0.0
 }
 ```
 ### Field descriptions
@@ -83,3 +85,18 @@ df_clean = C.transform(df_raw, trans)
 | `tsunami`             | Eventual tsunami(s) date ranges|
 | `skip`                | Ignore station              |
 | `wip`                 | Work in progress            |
+| `scale`               | Multiplicative factor applied to the sensor signal (default `1.0`; use `-1.0` for inverted sensors) |
+| `offset`              | Constant added to the sensor signal, in meters (default `0.0`) |
+
+### Scale and offset
+
+After the bad data have been dropped, the sensor column is corrected linearly:
+
+```
+value_clean = value_raw * scale + offset
+```
+
+Both fields are optional and default to a no-op (`scale = 1.0`, `offset = 0.0`).
+The typical use case is a sensor wired or reported with the opposite sign: set
+`"scale": -1.0` to flip it. `offset` is meant for a constant datum shift; note
+that it has no effect on demeaned output.

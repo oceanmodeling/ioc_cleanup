@@ -130,9 +130,8 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
     """
     Apply a cleaning transformation to an IOC sea-level time series.
 
-    The transformation defines the valid time window, dropped timestamps,
+    The transformation defines the valid time window, dropped timestamps, linear scale and offset correction,
     dropped date ranges, and sensor breakpoints. Bad data is ropped data from the DatFrame;
-    no offset correction is applied.
 
     Parameters:
         df: Raw IOC sea-level time series. The DataFrame must have
@@ -170,6 +169,7 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
             timestamps_to_drop = timestamps_to_drop.intersection(pd.DatetimeIndex(df.index))
         if len(timestamps_to_drop) > 0:
             df.loc[timestamps_to_drop, :] = np.nan
+    df[transformation.sensor] = df[transformation.sensor] * transformation.scale + transformation.offset
     df.attrs["breakpoints"] = [
         b.isoformat() for b in sorted(transformation.breakpoints)
     ]  # isoformat otherwise the parquet export will fail
