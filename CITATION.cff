@@ -21,7 +21,7 @@ identifiers:
     value: 10.5194/egusphere-egu26-7777
     description: EGU abstract
   - type: doi
-    value: 10.5281/zenodo.22181274
+    value: 10.5281/zenodo.23241131
     description: Zenodo dataset archive
 repository-code: 'https://github.com/oceanmodeling/ioc_cleanup'
 url: 'https://oceanmodeling.github.io/ioc_cleanup/'

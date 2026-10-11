@@ -6,7 +6,7 @@ from importlib.metadata import version
 import pandas as pd
 import pooch
 
-ZENODO_DOI = "10.5281/zenodo.22181274"
+ZENODO_DOI = "10.5281/zenodo.23241131"
 
 REGISTRY = pooch.create(
     path=pooch.os_cache("ioc_cleanup"),

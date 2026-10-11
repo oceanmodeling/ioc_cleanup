@@ -13,7 +13,7 @@ data plus the transformations.
   it downloads and caches `transformations.tar.gz` from Zenodo. See
   [Data Access](../access_data.md).
 - **Zenodo** - the complete dataset includes `transformations.tar.gz` on the
-  [Zenodo record](https://doi.org/10.5281/zenodo.22181274), if you prefer to
+  [Zenodo record](https://doi.org/10.5281/zenodo.23241131), if you prefer to
   fetch and extract them by hand.
 - **GitHub** - the transformations and metadata are also mirrored on the
   [GitHub releases](https://github.com/oceanmodeling/ioc_cleanup/releases),

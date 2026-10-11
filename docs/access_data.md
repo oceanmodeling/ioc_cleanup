@@ -40,7 +40,7 @@ this way and must be downloaded from Zenodo as described below.
 
 The full dataset is archived on Zenodo:
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22181274.svg)](https://zenodo.org/records/22181274?preview_file=README.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23241131.svg)](https://doi.org/10.5281/zenodo.23241131)
 
 ### Contents
 
@@ -83,4 +83,4 @@ EGU General Assembly 2026, Vienna, Austria, 3–8 May 2026, EGU26-7777,
 https://doi.org/10.5194/egusphere-egu26-7777, 2026.
 ```
 
-Dataset DOI: [10.5281/zenodo.22181274](https://doi.org/10.5281/zenodo.22181274)
+Dataset DOI: [10.5281/zenodo.23241131](https://doi.org/10.5281/zenodo.23241131)
