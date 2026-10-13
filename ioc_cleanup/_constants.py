@@ -14,7 +14,7 @@ REGISTRY = pooch.create(
     # Allows users to relocate the cache, e.g. on shared/HPC filesystems.
     env="IOC_CLEANUP_CACHE_DIR",
     registry={
-        "transformations.tar.gz": "md5:4d8665afbba1adb6f724c85e990acf03",
+        "transformations.tar.gz": "md5:ef9e7761dd3353934606288917683d91",
     },
 )
 
