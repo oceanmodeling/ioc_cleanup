@@ -180,6 +180,8 @@ Some steps - or offsets - can be caused by mulitple reasons:
 
     In the dashboard, we demean signal between breakpoints just for the ease of visualization (more details in `ioc_cleanup._tools`).
 
+    We provide nonetheless a method to clean and demean the signal in `scripts/clean_ioc.py`
+
 ### Vertical datum
 
 !!! warning "Vertical datum"

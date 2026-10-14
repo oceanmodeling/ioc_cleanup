@@ -9,12 +9,10 @@ type: dataset
 authors:
   - given-names: Thomas
     family-names: Saillour
-    name-particle: Thomas
     affiliation: EC JRC
     orcid: 'https://orcid.org/0009-0009-1549-2961'
   - given-names: Panagiotis
     family-names: Mavrogiorgos
-    name-particle: Thomas
     affiliation: EC JRC
 identifiers:
   - type: doi

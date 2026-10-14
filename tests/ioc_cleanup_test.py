@@ -144,7 +144,7 @@ def test_transform_scale_does_not_resurrect_dropped_values():
 
 
 def test_inverted_stations_are_flagged_with_negative_scale():
-    for station, sensor in (("alak2", "pwl"), ("mona2", "pwl")):
+    for station, sensor in (("alak2", "pwl"), ("mona2", "pwl"), ("alac2", "rad")):
         trans = C.load_transformation(station, sensor)
         assert trans.scale == SCALE
 

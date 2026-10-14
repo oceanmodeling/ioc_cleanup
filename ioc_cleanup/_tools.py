@@ -131,7 +131,7 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
     Apply a cleaning transformation to an IOC sea-level time series.
 
     The transformation defines the valid time window, dropped timestamps, linear scale and offset correction,
-    dropped date ranges, and sensor breakpoints. Bad data is ropped data from the DatFrame;
+    dropped date ranges, and sensor breakpoints. Bad data is dropped data from the DataFrame;
 
     Parameters:
         df: Raw IOC sea-level time series. The DataFrame must have
