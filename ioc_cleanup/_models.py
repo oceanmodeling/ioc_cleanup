@@ -19,3 +19,5 @@ class Transformation(pydantic.BaseModel):
     dropped_timestamps: list[datetime.datetime] = []
     breakpoints: list[datetime.datetime] = []
     tsunami: list[tuple[datetime.datetime, datetime.datetime]] = []
+    scale: float = 1.0
+    offset: float = 0.0

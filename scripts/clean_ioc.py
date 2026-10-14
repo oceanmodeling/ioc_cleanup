@@ -34,6 +34,7 @@ def process_station(code: pathlib.Path) -> None:
         return
 
     ts_clean = C.clean(ts, station, sensor)
+    ts_clean = C._tools.demean_signal(ts_clean)
     ts_clean.attrs["sensor"] = sensor
     ts_clean.to_frame(name=sensor).to_parquet(outpath)
 

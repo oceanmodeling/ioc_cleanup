@@ -126,11 +126,13 @@ def print_segment(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAr
         last_ts = df.index[indices[-1]].strftime("%Y-%m-%dT%H:%M:%S")
         mean = df.iloc[indices[0] : indices[-1]].mean()
 
+        # `offset` is reported with the opposite sign of the segment mean, so that
+        # pasting it in the JSON (`value * scale + offset`) demeans the segment.
         value = "{\n"
         value += f'  "start": "{first_ts}",\n'
         value += f'  "end": "{last_ts}",\n'
-        value += f'  "offset": {mean},\n'
-        value += '  "scale_factor": 1.0\n'
+        value += f'  "offset": {-mean},\n'
+        value += '  "scale": 1.0\n'
         value += "}"
     else:
         value = "No selection!"

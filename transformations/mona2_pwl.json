@@ -1,7 +1,7 @@
 {
   "ioc_code": "mona2",
   "sensor": "pwl",
-  "notes": "",
+  "notes": "signal is inverted, so scale is -1.0",
   "skip": false,
   "wip": false,
   "start": "2020-01-01T00:00:00",
@@ -3142,5 +3142,6 @@
     "2025-12-17T14:20:00"
   ],
   "tsunami":[
-  ]
+  ],
+  "scale": -1.0
 }
